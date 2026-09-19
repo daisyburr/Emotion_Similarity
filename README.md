@@ -1,4 +1,4 @@
-# Positive events converge in the mind, but diverge in the brain
+# Positive emotions converge in the mind, but diverge in the brain
 
 Code and data for the manuscript investigating whether individuals converge more
 on positive versus negative emotional experiences, behaviorally and neurally.
