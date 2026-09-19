@@ -1,0 +1,23 @@
+# Tooling
+.miniforge/
+.DS_Store
+**/.ipynb_checkpoints/
+
+# Superseded / archived material
+archive/
+
+# Raw human-subjects fMRI data: 157GB, not suitable for a public git repo
+# (size + human-subjects data governance). Available on request; see README.
+fMRI/
+
+# Third-party copyrighted material: Cowen & Keltner (2017) dataset and papers.
+# Not ours to redistribute -- cite/link to the original source instead.
+Analysis/CowenKeltner/
+
+# Literature PDFs (copyrighted)
+Analysis/refs/
+
+# Old/unclear-provenance internal files not part of this analysis
+Analysis/figs/run_issue/
+Analysis/figs/image_neural_similarity/*.pptx
+Online.zip
