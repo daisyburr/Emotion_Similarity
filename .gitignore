@@ -8,7 +8,7 @@ archive/
 
 # Raw human-subjects fMRI data: 157GB, not suitable for a public git repo
 # (size + human-subjects data governance). Available on request; see README.
-fMRI/
+/fMRI/
 
 # Third-party copyrighted material: Cowen & Keltner (2017) dataset and papers.
 # Not ours to redistribute -- cite/link to the original source instead.

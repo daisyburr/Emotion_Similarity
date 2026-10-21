@@ -1,0 +1,16 @@
+Model,Outcome,Mean t across ROIs,ROIs with mean t < -2,ROIs significant in >= 50% of splits
+impulse_LSA,valence effect on ISS (half B),-2.6,34.0,35.0
+impulse_LSA,... adjusted for independent amplitude (half A),-1.45,11.0,12.0
+impulse_LSA,valence effect on independent amplitude,-3.18,40.0,41.0
+impulse_LSA,valence effect on item-specific ISS (template removed),-0.94,4.0,3.0
+impulse_LSA,correlation of independent amplitude with ISS across images (mean over ROIs),0.38,,
+box4_LSA,valence effect on ISS (half B),-1.92,22.0,24.0
+box4_LSA,... adjusted for independent amplitude (half A),-1.29,9.0,12.0
+box4_LSA,valence effect on independent amplitude,-2.37,29.0,30.0
+box4_LSA,valence effect on item-specific ISS (template removed),-1.06,8.0,8.0
+box4_LSA,correlation of independent amplitude with ISS across images (mean over ROIs),0.21,,
+box4_LSS,valence effect on ISS (half B),-2.02,24.0,23.0
+box4_LSS,... adjusted for independent amplitude (half A),-1.21,5.0,6.0
+box4_LSS,valence effect on independent amplitude,-2.27,29.0,29.0
+box4_LSS,valence effect on item-specific ISS (template removed),-1.12,8.0,11.0
+box4_LSS,correlation of independent amplitude with ISS across images (mean over ROIs),0.31,,

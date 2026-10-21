@@ -1,0 +1,15 @@
+Model,Clusters,n clusters,Relabelings,ROIs neg > pos (of 50),ROIs p < .05 uncorrected (exact permutation),FDR-significant ROIs (exact permutation),"Significant, neg > pos","Significant, pos > neg",FDR-significant ROIs (t-test on cluster means)
+published_2021,all clusters,23,1352078,50,26,9,9,0,12
+published_2021,odd single-image cluster dropped,22,705432,50,26,11,11,0,21
+impulse_LSA,all clusters,23,1352078,50,27,19,19,0,22
+impulse_LSA,odd single-image cluster dropped,22,705432,50,27,18,18,0,21
+box4_LSA,all clusters,23,1352078,47,25,14,14,0,13
+box4_LSA,odd single-image cluster dropped,22,705432,48,25,18,18,0,19
+box4_LSS,all clusters,23,1352078,49,16,0,0,0,9
+box4_LSS,odd single-image cluster dropped,22,705432,49,16,0,0,0,0
+impulse_LSA_runeq,all clusters,23,1352078,50,29,18,18,0,25
+impulse_LSA_runeq,odd single-image cluster dropped,22,705432,50,27,18,18,0,19
+box4_LSA_runeq,all clusters,23,1352078,47,23,14,14,0,13
+box4_LSA_runeq,odd single-image cluster dropped,22,705432,47,23,14,14,0,20
+box4_LSS_runeq,all clusters,23,1352078,50,16,0,0,0,9
+box4_LSS_runeq,odd single-image cluster dropped,22,705432,50,16,0,0,0,0

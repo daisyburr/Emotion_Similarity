@@ -1,0 +1,4 @@
+Model,Run eta^2,Run eta^2 expected by chance,PC1 share of variance,|rho| PC1 vs presentation order,Extreme PC1 trials at run ends,Run-end share expected by chance,|PC1| vs pattern magnitude
+impulse_LSA,0.068,0.022,0.54,0.12,0.05,0.06,0.91
+box4_LSA,0.086,0.022,0.55,0.15,0.07,0.06,0.9
+box4_LSS,0.128,0.022,0.58,0.18,0.08,0.06,0.91
