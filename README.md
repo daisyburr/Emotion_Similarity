@@ -40,10 +40,16 @@ on positive versus negative emotional experiences, behaviorally and neurally.
   these are human-subjects neuroimaging data and are available on request,
   subject to appropriate data use agreements, rather than distributed via a
   public git repository. Step 1 of the pipeline above needs them.
-- **Anonymized subject-level arrays** (`fMRI/derived/roi_pairwise_<model>.npz`:
-  pairwise pattern correlations, pattern magnitudes and projections on the shared
-  response pattern, per region): these reproduce steps 3-6 without voxel data.
-  They are too large for git and are archived separately [archive DOI to be added].
+- **Anonymized subject-level arrays** (`fMRI/derived/roi_pairwise_<model>.npz` for
+  the one-TR impulse, 4 s boxcar and 4 s boxcar per image models: pairwise pattern
+  correlations, pattern magnitudes and projections on the shared response pattern,
+  per region and image). With the similarity matrices in `Analysis/figs/` they
+  reproduce `roi_similarity.py`'s similarity matrices, `supplement_analyses.py`,
+  `inter_subject_rsa.py`, and the reliability and label checks in `design_checks.py`.
+  They do not reproduce `first_level_betas.py`, `run_variance.py`, the
+  run-mean-equalized models, or the run-assignment check, which need the voxel betas
+  and onset files. The arrays are too large for git and are archived separately
+  [archive DOI to be added].
 - **Study 2 stimulus/response data**: from Cowen & Keltner (2017, *PNAS*),
   "Self-report captures 27 distinct categories of emotion bridged by continuous
   gradients." This is a third-party dataset; see the original publication for
@@ -60,7 +66,7 @@ notebook and cached in `fMRI/derived/`).
 Studies 1-3 run end to end from the files in this repository. For Study 4, the
 notebook reads the similarity matrices and supplementary tables in
 `Analysis/figs/image_neural_similarity/`; to regenerate them, run the scripts in
-`Analysis/fmri/` in the order listed above (steps 3-6 need only the archived
-subject-level arrays). Six of the 37 fMRI participants are excluded because their
+`Analysis/fmri/` in the order listed above (steps 3 and 5, and the parts of step 6
+described above, need only the archived subject-level arrays). Six of the 37 fMRI participants are excluded because their
 onset files assign 22-24 images to more than one run, so betas could not be
 matched to images; 31 are analyzed.

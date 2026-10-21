@@ -21,3 +21,6 @@ Analysis/refs/
 Analysis/figs/run_issue/
 Analysis/figs/image_neural_similarity/*.pptx
 Online.zip
+
+# Archive packages assembled for deposit (not part of the repository)
+/deposit/
