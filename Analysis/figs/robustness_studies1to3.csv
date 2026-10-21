@@ -1,0 +1,26 @@
+Section,Check,Value
+A,"images labelled differently, study1 vs study3",3 (FA-skater.jpg; PM-People_011_h.jpg; TH-Animals_004_v.jpg)
+A,"images labelled differently, study1 vs study4",2 (FA-skater.jpg; TH-Animals_004_v.jpg)
+A,"images labelled differently, study3 vs study4",1 (PM-People_011_h.jpg)
+B,recovered ratings: range,-40.1 to 141.9; share outside 0-100: 0.115
+B,"recovered ratings: mean across-participant variance, positive / negative / ratio (19 dimensions)",279 / 365 / 0.76
+C,raw sample,"804 raters, 103069 ratings, 39.9 raters per image-dimension"
+C,"rater SD, mean over 19 dimensions (lower = more agreement)","positive 20.173, negative 23.619, d = -1.75, image-level p = 1.4e-18, category-level exact p = 0.00021 (22 clusters)"
+C,rater SD after removing the mean-level trend within each dimension,"positive -0.015, negative 0.015, d = -0.02, image-level p = 0.89, category-level exact p = 0.94 (22 clusters)"
+C,split-half reliability of the 19-dimension mean profile (Spearman-Brown),"positive 0.986, negative 0.969, d = +0.67, image-level p = 0.00016, category-level exact p = 0.014 (22 clusters)"
+C,"components for 90% variance of the group-mean appraisal matrix, positive / negative",6 / 5
+C,"participant bootstrap, positive minus negative components (mean, 95% interval)","+0.92 [0.0, 2.0]"
+D,dimensions rated,"14: approach, arousal, attention, certainty, commitment, control, dominance, effort, fairness, identity, improvement, obstruction, safety, valence"
+D,"similarity, 13 features used in the notebook (12 appraisal dimensions + arousal)","positive 0.364, negative 0.229, d = 0.84; valence coefficient adjusted for arousal 0.117 (t = 16.8)"
+D,"similarity, 12 appraisal dimensions (arousal and valence excluded)","positive 0.373, negative 0.221, d = 0.91; valence coefficient adjusted for arousal 0.141 (t = 18.9)"
+D,"emotion-category similarity, valence coefficient raw / adjusted for arousal, categories endorsed per rater, rater count",0.057 (t = 4.4) / 0.040 (t = 3.2)
+E,raters per image; expected in-sample R2 of OLS with 13 predictors under no relationship,37; 0.36
+E,"leave-one-subject-out CV R2, PLS 13 components (the notebook; equivalent to OLS) (images with R2 > 0: 0/136)","positive -0.519, negative -0.575, d = +0.31, image-level p = 0.071, category-level exact p = 0.12 (22 clusters)"
+E,"leave-one-subject-out CV R2, PLS 1 component (images with R2 > 0: 54/136)","positive 0.015, negative -0.046, d = +1.13, image-level p = 1e-09, category-level exact p = 0.0006 (22 clusters)"
+E,"leave-one-subject-out CV R2, PLS 2 components (images with R2 > 0: 52/136)","positive 0.014, negative -0.068, d = +0.89, image-level p = 7.4e-07, category-level exact p = 0.00059 (22 clusters)"
+E,"leave-one-subject-out CV R2, ridge alpha = 100 (images with R2 > 0: 0/136)","positive -0.402, negative -0.516, d = +0.67, image-level p = 0.00016, category-level exact p = 0.0056 (22 clusters)"
+E,"leave-one-subject-out CV R2, ridge alpha = 1000 (images with R2 > 0: 21/136)","positive -0.119, negative -0.301, d = +1.31, image-level p = 3.8e-12, category-level exact p = 0.00011 (22 clusters)"
+E,"nested CV R2, complexity chosen inside training raters (mean-only or PLS 1-5; images with R2 > 0: 45/136)","positive 0.007, negative -0.052, d = +0.83, image-level p = 3.2e-06, category-level exact p = 0.00063 (22 clusters)"
+E,"nested CV: share of folds choosing the mean-only model, positive / negative images",0.09 / 0.41
+E,signed mean coefficient (as reported),"positive 0.0378, negative 0.0260, t = +2.12"
+E,mean absolute coefficient,"positive 0.2941, negative 0.2154, t = +8.68"
