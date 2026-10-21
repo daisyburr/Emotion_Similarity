@@ -28,5 +28,7 @@ F,positive images (n = 67): explainable variance (mean of six emotions),0.94
 F,"positive images: leave-one-out explained variance / explainable variance, linear; k-NN (k = 5)",0.564; 0.551
 F,negative images (n = 69): explainable variance (mean of six emotions),0.97
 F,"negative images: leave-one-out explained variance / explainable variance, linear; k-NN (k = 3)",0.744; 0.729
+F,positive images: across-image variance of mean appraisal ratings; of mean emotion ratings; across-rater variance of emotion ratings within image,94; 97; 321
+F,negative images: across-image variance of mean appraisal ratings; of mean emotion ratings; across-rater variance of emotion ratings within image,258; 160; 301
 F,"linear regression: positive minus negative normalized explained variance (category bootstrap, 95% interval)","-0.180 [-0.394, +0.038]"
 F,"k-nearest-neighbor regression: positive minus negative normalized explained variance (category bootstrap, 95% interval)","-0.178 [-0.348, -0.051]"

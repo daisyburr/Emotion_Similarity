@@ -255,6 +255,14 @@ def study3_cowen_keltner():
         add("F", f"{label} images (n = {result['n'][label]}): explainable variance (mean of six emotions)", f"{result['explainable'][label]:.2f}")
         add("F", f"{label} images: leave-one-out explained variance / explainable variance, linear; k-NN (k = {result['k'][label]})",
             f"{result['linear'][label]:.3f}; {result['knn'][label]:.3f}")
+    images = sorted(ratings.Image.unique())
+    info, _ = category_info(images)
+    means = ratings.groupby("Image")[FEATURES + TARGETS].mean().reindex(images)
+    within = ratings.groupby("Image")[TARGETS].var().mean(1).reindex(images)
+    for label, code in (("positive", "pos"), ("negative", "neg")):
+        mask = (info.Valence == code).values
+        add("F", f"{label} images: across-image variance of mean appraisal ratings; of mean emotion ratings; across-rater variance of emotion ratings within image",
+            f"{means.loc[mask, FEATURES].var().mean():.0f}; {means.loc[mask, TARGETS].var().mean():.0f}; {within[mask].mean():.0f}")
     for which, name in (("linear", "linear regression"), ("knn", "k-nearest-neighbor regression")):
         lo, hi = result[which]["interval"]
         add("F", f"{name}: positive minus negative normalized explained variance (category bootstrap, 95% interval)",
