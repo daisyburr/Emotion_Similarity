@@ -1,4 +1,4 @@
-# Positive emotions converge in the mind, but diverge in the brain
+# People agree more about good experiences, but their brains respond more alike to bad ones
 
 Code and data for the manuscript investigating whether individuals converge more
 on positive versus negative emotional experiences, behaviorally and neurally.
