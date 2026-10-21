@@ -33,23 +33,18 @@ import statsmodels.formula.api as smf
 from scipy import stats
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.linear_model import Ridge
-from sklearn.model_selection import KFold, LeaveOneOut
+from sklearn.model_selection import LeaveOneOut
 
 warnings.filterwarnings("ignore")
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(HERE / "fmri"))
 import supplement_analyses as S  # noqa: E402
+from study3_transformation import (CATEGORY_VALENCE, FEATURES, TARGETS, cowen_keltner, image_table,  # noqa: E402
+                                   nested_prediction)
 
 RAW_DUMP = os.environ.get("RAW_DUMP", "")
 SEED = 0
-FEATURES = ["Narrative_Rating", "Immoral_Rating", "Pleasant_Rating", "Threatened_Rating", "Avoid_Rating",
-            "SociallyAcceptable_Rating", "Interact_Rating", "Contamination_Rating", "Suffering_Rating",
-            "Affection_Rating", "Desire_Rating", "Astonished_Rating", "Relate_Rating"]
-TARGETS = [f"{e}_Rating" for e in ["Surprise", "Sadness", "Joy", "Fear", "Anger", "Disgust"]]
-CATEGORY_VALENCE = {"AA": "neg", "AC": "pos", "AT": "pos", "CA": "pos", "CH": "pos", "CO": "neg", "FA": "neg", "FO": "pos",
-                    "HC": "neg", "HM": "neg", "HV": "neg", "NC": "neg", "NI": "neg", "NM": "neg", "NN": "neg", "PC": "pos",
-                    "PI": "pos", "PM": "pos", "PN": "pos", "SI": "pos", "SX": "pos", "TH": "neg"}
 rows = []
 
 
@@ -58,10 +53,7 @@ def add(section, check, value):
     print(f"[{section}] {check}: {value}", flush=True)
 
 
-def category_info(images):
-    info = pd.DataFrame({"Valence": [CATEGORY_VALENCE[i[:2]] for i in images], "Category": [i[:2] for i in images]}, index=images)
-    cluster = info.Category + info.Valence.map({"pos": "+", "neg": "-"})
-    return info, cluster
+category_info = image_table
 
 
 def compare(section, label, x, info, cluster, lower_is_positive_effect=False):
@@ -209,34 +201,6 @@ def study2():
         f"{raw_fit.params['pos']:.3f} (t = {raw_fit.tvalues['pos']:.1f}) / {adjusted.params['pos']:.3f} (t = {adjusted.tvalues['pos']:.1f})")
 
 
-class MeanModel:
-    def fit(self, X, Y):
-        self.mean = Y.mean(0)
-        return self
-
-    def predict(self, X):
-        return np.tile(self.mean, (len(X), 1))
-
-
-def make_model(k):
-    return MeanModel() if k == 0 else PLSRegression(n_components=k)
-
-
-def nested_prediction(X, Y, ks=(0, 1, 2, 3, 4, 5)):
-    predictions, chosen = np.zeros_like(Y, dtype=float), []
-    for test in range(len(X)):
-        train = np.arange(len(X)) != test
-        Xt, Yt = X[train], Y[train]
-        error = {k: 0.0 for k in ks}
-        for a, b in KFold(6, shuffle=True, random_state=SEED).split(Xt):
-            for k in ks:
-                error[k] += ((Yt[b] - make_model(k).fit(Xt[a], Yt[a]).predict(Xt[b])) ** 2).sum()
-        best = min(error, key=error.get)
-        chosen.append(best)
-        predictions[test] = make_model(best).fit(Xt, Yt).predict(X[test:test + 1])
-    return predictions, chosen
-
-
 def study3():
     ratings = pd.read_csv(HERE / "IAPS_rating.csv", index_col=0)
     images = sorted(ratings.Image.unique())
@@ -286,67 +250,15 @@ def study3():
 
 def study3_cowen_keltner():
     ratings = pd.read_csv(HERE / "IAPS_rating.csv", index_col=0)
-    images = sorted(ratings.Image.unique())
-    subjects = sorted(ratings.Subject.unique())
-    predictors = np.stack([ratings.pivot(index="Subject", columns="Image", values=c).reindex(index=subjects, columns=images).values for c in FEATURES], -1)
-    targets = np.stack([ratings.pivot(index="Subject", columns="Image", values=c).reindex(index=subjects, columns=images).values for c in TARGETS], -1)
-    valence = np.array([CATEGORY_VALENCE[i[:2]] for i in images])
-    category = np.array([i[:2] for i in images])
-    rng = np.random.default_rng(SEED)
-    half = len(subjects) // 2
-
-    def loo_linear(X, Y):
-        Z = np.column_stack([np.ones(len(X)), X])
-        H = Z @ np.linalg.pinv(Z.T @ Z) @ Z.T
-        return Y - (Y - H @ Y) / (1 - np.diag(H))[:, None]
-
-    def loo_knn(X, Y, k):
-        Xs = (X - X.mean(0)) / X.std(0)
-        distance = ((Xs[:, None, :] - Xs[None, :, :]) ** 2).sum(-1)
-        np.fill_diagonal(distance, np.inf)
-        return Y[np.argsort(distance, 1)[:, :k]].mean(1)
-
-    def explained(Y, P):
-        return 1 - ((Y - P) ** 2).sum(0) / ((Y - Y.mean(0)) ** 2).sum(0)
-
-    fits = {}
-    for label, mask in (("positive", valence == "pos"), ("negative", valence == "neg")):
-        X, Y = predictors.mean(0)[mask], targets.mean(0)[mask]
-        reliability = []
-        for _ in range(200):
-            perm = rng.permutation(len(subjects))
-            a, b = targets[perm[:half]][:, mask].mean(0), targets[perm[half:2 * half]][:, mask].mean(0)
-            r = np.array([np.corrcoef(a[:, j], b[:, j])[0, 1] for j in range(Y.shape[1])])
-            reliability.append(2 * r / (1 + r))
-        explainable = np.mean(reliability, 0)
-        linear = loo_linear(X, Y)
-        ks = range(1, min(50, len(X) - 1) + 1)
-        scores = {k: explained(Y, loo_knn(X, Y, k)) for k in ks}
-        best = max(ks, key=lambda k: scores[k].mean())
-        fits[label] = {"mask": mask, "Y": Y, "linear": linear, "knn": loo_knn(X, Y, best), "explainable": explainable}
-        add("F", f"{label} images (n = {mask.sum()}): explainable variance (mean of six emotions)", f"{explainable.mean():.2f}")
-        add("F", f"{label} images: leave-one-out explained variance / explainable variance, linear; k-NN (k = {best})",
-            f"{(explained(Y, linear) / explainable).mean():.3f}; {(scores[best] / explainable).mean():.3f}")
-
-    def normalized(label, which, index):
-        fit = fits[label]
-        Y, P = fit["Y"][index], fit[which][index]
-        return ((1 - ((Y - P) ** 2).sum(0) / ((Y - fit["Y"].mean(0)) ** 2).sum(0)) / fit["explainable"]).mean()
-
-    groups = {label: {c: np.where(category[fits[label]["mask"]] == c)[0] for c in np.unique(category[fits[label]["mask"]])} for label in fits}
+    result = cowen_keltner(ratings)
+    for label in ("positive", "negative"):
+        add("F", f"{label} images (n = {result['n'][label]}): explainable variance (mean of six emotions)", f"{result['explainable'][label]:.2f}")
+        add("F", f"{label} images: leave-one-out explained variance / explainable variance, linear; k-NN (k = {result['k'][label]})",
+            f"{result['linear'][label]:.3f}; {result['knn'][label]:.3f}")
     for which, name in (("linear", "linear regression"), ("knn", "k-nearest-neighbor regression")):
-        observed = normalized("positive", which, np.arange(fits["positive"]["Y"].shape[0])) - normalized("negative", which, np.arange(fits["negative"]["Y"].shape[0]))
-        draws = []
-        for _ in range(2000):
-            pair = []
-            for label in ("positive", "negative"):
-                keys = list(groups[label])
-                pick = rng.choice(len(keys), len(keys))
-                pair.append(normalized(label, which, np.concatenate([groups[label][keys[i]] for i in pick])))
-            draws.append(pair[0] - pair[1])
-        draws = np.array(draws)
+        lo, hi = result[which]["interval"]
         add("F", f"{name}: positive minus negative normalized explained variance (category bootstrap, 95% interval)",
-            f"{observed:+.3f} [{np.percentile(draws, 2.5):+.3f}, {np.percentile(draws, 97.5):+.3f}]")
+            f"{result[which]['difference']:+.3f} [{lo:+.3f}, {hi:+.3f}]")
 
 
 if __name__ == "__main__":
