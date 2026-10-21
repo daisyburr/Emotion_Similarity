@@ -11,6 +11,11 @@ D. Study 2: similarity with and without arousal in the feature set; valence effe
    and rater count.
 E. Study 3: leave-one-subject-out cross-validated R2 under the notebook's 13-component PLS (equivalent to OLS), regularized variants,
    and a valence-blind nested cross-validation that chooses model complexity inside the training raters.
+F. Study 3 following Cowen & Keltner (2017, PNAS): leave-one-out cross-validated linear and k-nearest-neighbor regression of the
+   emotion ratings on the appraisal ratings across images (rater means), run separately within positive and negative images;
+   explained variance divided by the explainable variance (split-half reliability of each emotion rating across images, Spearman-Brown
+   corrected); k chosen from 1-50 as the value with the greatest average explained variance; the positive-minus-negative difference
+   is bootstrapped by resampling stimulus categories within each valence.
 Category-level p-values use the exact cluster-label permutation in fmri/supplement_analyses.py.
 
 Usage: python robustness_studies1to3.py        (RAW_DUMP=/path/to/dump.tsv to include part C)
@@ -279,7 +284,72 @@ def study3():
         add("E", label, f"positive {a.mean():.4f}, negative {b.mean():.4f}, t = {stats.ttest_ind(a, b)[0]:+.2f}")
 
 
+def study3_cowen_keltner():
+    ratings = pd.read_csv(HERE / "IAPS_rating.csv", index_col=0)
+    images = sorted(ratings.Image.unique())
+    subjects = sorted(ratings.Subject.unique())
+    predictors = np.stack([ratings.pivot(index="Subject", columns="Image", values=c).reindex(index=subjects, columns=images).values for c in FEATURES], -1)
+    targets = np.stack([ratings.pivot(index="Subject", columns="Image", values=c).reindex(index=subjects, columns=images).values for c in TARGETS], -1)
+    valence = np.array([CATEGORY_VALENCE[i[:2]] for i in images])
+    category = np.array([i[:2] for i in images])
+    rng = np.random.default_rng(SEED)
+    half = len(subjects) // 2
+
+    def loo_linear(X, Y):
+        Z = np.column_stack([np.ones(len(X)), X])
+        H = Z @ np.linalg.pinv(Z.T @ Z) @ Z.T
+        return Y - (Y - H @ Y) / (1 - np.diag(H))[:, None]
+
+    def loo_knn(X, Y, k):
+        Xs = (X - X.mean(0)) / X.std(0)
+        distance = ((Xs[:, None, :] - Xs[None, :, :]) ** 2).sum(-1)
+        np.fill_diagonal(distance, np.inf)
+        return Y[np.argsort(distance, 1)[:, :k]].mean(1)
+
+    def explained(Y, P):
+        return 1 - ((Y - P) ** 2).sum(0) / ((Y - Y.mean(0)) ** 2).sum(0)
+
+    fits = {}
+    for label, mask in (("positive", valence == "pos"), ("negative", valence == "neg")):
+        X, Y = predictors.mean(0)[mask], targets.mean(0)[mask]
+        reliability = []
+        for _ in range(200):
+            perm = rng.permutation(len(subjects))
+            a, b = targets[perm[:half]][:, mask].mean(0), targets[perm[half:2 * half]][:, mask].mean(0)
+            r = np.array([np.corrcoef(a[:, j], b[:, j])[0, 1] for j in range(Y.shape[1])])
+            reliability.append(2 * r / (1 + r))
+        explainable = np.mean(reliability, 0)
+        linear = loo_linear(X, Y)
+        ks = range(1, min(50, len(X) - 1) + 1)
+        scores = {k: explained(Y, loo_knn(X, Y, k)) for k in ks}
+        best = max(ks, key=lambda k: scores[k].mean())
+        fits[label] = {"mask": mask, "Y": Y, "linear": linear, "knn": loo_knn(X, Y, best), "explainable": explainable}
+        add("F", f"{label} images (n = {mask.sum()}): explainable variance (mean of six emotions)", f"{explainable.mean():.2f}")
+        add("F", f"{label} images: leave-one-out explained variance / explainable variance, linear; k-NN (k = {best})",
+            f"{(explained(Y, linear) / explainable).mean():.3f}; {(scores[best] / explainable).mean():.3f}")
+
+    def normalized(label, which, index):
+        fit = fits[label]
+        Y, P = fit["Y"][index], fit[which][index]
+        return ((1 - ((Y - P) ** 2).sum(0) / ((Y - fit["Y"].mean(0)) ** 2).sum(0)) / fit["explainable"]).mean()
+
+    groups = {label: {c: np.where(category[fits[label]["mask"]] == c)[0] for c in np.unique(category[fits[label]["mask"]])} for label in fits}
+    for which, name in (("linear", "linear regression"), ("knn", "k-nearest-neighbor regression")):
+        observed = normalized("positive", which, np.arange(fits["positive"]["Y"].shape[0])) - normalized("negative", which, np.arange(fits["negative"]["Y"].shape[0]))
+        draws = []
+        for _ in range(2000):
+            pair = []
+            for label in ("positive", "negative"):
+                keys = list(groups[label])
+                pick = rng.choice(len(keys), len(keys))
+                pair.append(normalized(label, which, np.concatenate([groups[label][keys[i]] for i in pick])))
+            draws.append(pair[0] - pair[1])
+        draws = np.array(draws)
+        add("F", f"{name}: positive minus negative normalized explained variance (category bootstrap, 95% interval)",
+            f"{observed:+.3f} [{np.percentile(draws, 2.5):+.3f}, {np.percentile(draws, 97.5):+.3f}]")
+
+
 if __name__ == "__main__":
-    for step in (valence_labels, recovered_ratings, raw_ratings, study2, study3):
+    for step in (valence_labels, recovered_ratings, raw_ratings, study2, study3, study3_cowen_keltner):
         step()
     pd.DataFrame(rows, columns=["Section", "Check", "Value"]).to_csv(HERE / "figs" / "robustness_studies1to3.csv", index=False)

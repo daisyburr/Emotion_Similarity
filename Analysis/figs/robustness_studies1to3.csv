@@ -24,3 +24,9 @@ E,"nested CV R2, complexity chosen inside training raters (mean-only or PLS 1-5;
 E,"nested CV: share of folds choosing the mean-only model, positive / negative images",0.09 / 0.41
 E,signed mean coefficient (as reported),"positive 0.0378, negative 0.0260, t = +2.12"
 E,mean absolute coefficient,"positive 0.2941, negative 0.2154, t = +8.68"
+F,positive images (n = 67): explainable variance (mean of six emotions),0.94
+F,"positive images: leave-one-out explained variance / explainable variance, linear; k-NN (k = 5)",0.564; 0.551
+F,negative images (n = 69): explainable variance (mean of six emotions),0.97
+F,"negative images: leave-one-out explained variance / explainable variance, linear; k-NN (k = 3)",0.744; 0.729
+F,"linear regression: positive minus negative normalized explained variance (category bootstrap, 95% interval)","-0.180 [-0.394, +0.038]"
+F,"k-nearest-neighbor regression: positive minus negative normalized explained variance (category bootstrap, 95% interval)","-0.178 [-0.348, -0.051]"
