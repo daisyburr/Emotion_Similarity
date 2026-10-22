@@ -56,10 +56,19 @@ on positive versus negative emotional experiences, behaviorally and neurally.
   gradients." This is a third-party dataset; see the original publication for
   access to their data.
 
+## License
+
+The code is released under the MIT License (`LICENSE`). The behavioral rating files
+(`Analysis/IAPS_rating.csv`, `Online/CIAPS_Appraisal_Recovered_NNMF_SGD.csv`) and the derived
+similarity tables are released under CC BY 4.0
+(https://creativecommons.org/licenses/by/4.0/), the license also used for the archived arrays.
+The IAPS images and the Cowen & Keltner data are not part of this repository and keep their own terms.
+
 ## Reproducing the analysis
 
 The notebook was built and run with Python 3.11 (pandas, numpy, scikit-learn,
-scipy, nltools, nibabel, nilearn, statsmodels, matplotlib, seaborn). Study 4
+scipy, nltools, nibabel, nilearn, statsmodels, matplotlib, seaborn); the exact
+versions are in `environment.yml` (`conda env create -f environment.yml`). Study 4
 additionally requires the Neurosynth-derived 50-region parcellation used for the
 fMRI ROI analysis (NeuroVault collection 2099; fetched automatically in the
 notebook and cached in `fMRI/derived/`).
