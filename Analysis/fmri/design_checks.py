@@ -6,10 +6,8 @@
    in Study 4, and the Study 4 two-sample result when the disagreeing images take their Study 1 labels.
 3. Split-half reliability (random halves of the images, Spearman-Brown corrected) of the pairwise appraisal similarity and
    of the pairwise neural similarity, per valence.
-4. Correlation with valence of rating-based proxies for arousal (independent sample).
 
-Inputs: fMRI/derived/first_level/*.npz, fMRI/derived/roi_pairwise_box4_LSA.npz, Online/CIAPS_Appraisal_Recovered_NNMF_SGD.csv,
-        Analysis/IAPS_rating.csv
+Inputs: fMRI/derived/first_level/*.npz, fMRI/derived/roi_pairwise_box4_LSA.npz, Online/CIAPS_Appraisal_Recovered_NNMF_SGD.csv
 Output: Analysis/figs/image_neural_similarity/Study4_design_checks.csv
 Usage: python design_checks.py
 """
@@ -88,24 +86,9 @@ def split_half_reliability(rows):
                  (f"split-half reliability of pairwise neural similarity (mean over ROIs), {label} images", round(float(spearman_brown(np.mean(r_neural))), 2))]
 
 
-def arousal_proxies(rows):
-    ratings = pd.read_csv(ROOT / "Online" / "CIAPS_Appraisal_Recovered_NNMF_SGD.csv", usecols=["Image", "Rating", "Condition"])
-    means = ratings.groupby(["Image", "Condition"]).Rating.mean().unstack()
-    info = pd.read_csv(OUT / "image_valence_category.csv", index_col="Image")
-    means = means.reindex(info.index)
-    positive = (info.Valence == "pos").astype(float).values
-    proxies = {
-        "threat (mean of Threatened, Avoid, Suffering, Contamination)": means[["Threatened", "Avoid", "Suffering", "Contamination"]].mean(1),
-        "emotion intensity (sum of six emotion ratings)": means[["Fear", "Anger", "Disgust", "Sadness", "Joy", "Surprise"]].sum(1),
-        "valence extremity (|Pleasant - mean|)": (means.Pleasant - means.Pleasant.mean()).abs(),
-    }
-    for name, values in proxies.items():
-        rows.append((f"correlation with valence (positive = 1): {name}", round(float(np.corrcoef(values, positive)[0, 1]), 2)))
-
-
 if __name__ == "__main__":
     rows = []
-    for step in (run_assignment_overlap, label_agreement, split_half_reliability, arousal_proxies):
+    for step in (run_assignment_overlap, label_agreement, split_half_reliability):
         step(rows)
     frame = pd.DataFrame(rows, columns=["Check", "Value"])
     frame.to_csv(OUT / "Study4_design_checks.csv", index=False)

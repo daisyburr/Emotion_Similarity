@@ -11,6 +11,3 @@ images whose valence label differs (names),FA-skater.jpg; TH-Animals_004_v.jpg
 "split-half reliability of pairwise neural similarity (mean over ROIs), pos images",0.43
 "split-half reliability of pairwise appraisal similarity, neg images",0.96
 "split-half reliability of pairwise neural similarity (mean over ROIs), neg images",0.53
-"correlation with valence (positive = 1): threat (mean of Threatened, Avoid, Suffering, Contamination)",-0.89
-correlation with valence (positive = 1): emotion intensity (sum of six emotion ratings),0.78
-correlation with valence (positive = 1): valence extremity (|Pleasant - mean|),0.13

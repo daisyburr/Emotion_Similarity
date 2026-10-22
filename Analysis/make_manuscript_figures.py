@@ -52,7 +52,4 @@ def brain_map(name):
 
 
 brain_map("Fig4.png")
-for source, name in (("trans/emo_transformation_nestedCVR2_barplot_valence.png", "Fig3.png"),
-                     ("trans/trans_plot_by_valence.png", "FigS1.png"),
-                     ("trans/emo_transformation_R2_barplot_valence.png", "FigS2.png")):
-    shutil.copy(os.path.join(FIGS, source), os.path.join(OUT, name))
+shutil.copy(os.path.join(FIGS, "trans", "emo_transformation_nestedCVR2_barplot_valence.png"), os.path.join(OUT, "Fig3.png"))

@@ -1,8 +1,8 @@
-Model,ROIs neg > pos (of 50),FDR-significant ROIs,"Significant, neg > pos","Significant, pos > neg",Cohen's d across significant ROIs,Mean ISS (r),Profile r with primary
-"one-TR impulse, original 2021 matrix",50,39,39,0,-1.5,0.055,0.88
-"one-TR impulse, re-estimated",50,38,38,0,-1.54,0.056,0.88
-"4 s boxcar, all trials in one GLM (primary)",47,30,29,1,-1.34,0.029,1.0
-"4 s boxcar, one GLM per trial",49,27,27,0,-1.65,0.046,0.97
-"one-TR impulse, run means equalized",50,41,41,0,-1.47,0.059,0.88
-"4 s boxcar, run means equalized",47,30,30,0,-1.5,0.032,1.0
-"4 s boxcar LSS, run means equalized",50,30,30,0,-1.54,0.052,0.97
+Model,ROIs neg > pos (of 50),FDR-significant ROIs,"Significant, neg > pos","Significant, pos > neg",Mean ISS (r),Profile r with primary
+"one-TR impulse, original 2021 matrix",50,39,39,0,0.055,0.88
+"one-TR impulse, re-estimated",50,38,38,0,0.056,0.88
+"4 s boxcar, all trials in one GLM (primary)",47,30,29,1,0.029,1.0
+"4 s boxcar, one GLM per trial",49,27,27,0,0.046,0.97
+"one-TR impulse, run means equalized",50,41,41,0,0.059,0.88
+"4 s boxcar, run means equalized",47,30,30,0,0.032,1.0
+"4 s boxcar LSS, run means equalized",50,30,30,0,0.052,0.97

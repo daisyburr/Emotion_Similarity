@@ -6,15 +6,19 @@ on positive versus negative emotional experiences, behaviorally and neurally.
 ## Contents
 
 - `Analysis/Emotion_Similarity_Consolidated.ipynb` — the full analysis pipeline
-  (Studies 1-4): behavioral appraisal similarity, PCA complexity, an independent
-  video-dataset replication, a PLS appraisal-to-emotion transformation model, and
-  fMRI ROI inter-subject similarity.
+  (Studies 1-4): behavioral appraisal similarity, PCA structure, an independent
+  video-dataset replication, appraisal-to-emotion prediction (nested cross-validation
+  and a Cowen & Keltner style analysis across images), and fMRI ROI inter-subject
+  similarity.
+- `Analysis/study3_transformation.py` — the Study 3 analyses (nested cross-validation
+  and the across-image analysis), imported by the notebook.
+- `Analysis/robustness_studies1to3.py` — the Study 2 check without arousal and the
+  Study 3 alternative-model table (`Analysis/figs/robustness_studies1to3.csv`).
+- `Analysis/make_manuscript_figures.py` — assembles Figs. 1-4 from the notebook's panels.
 - `Analysis/IAPS_rating.csv` — behavioral appraisal ratings for the fMRI subsample
   (Study 1/3/4).
 - `Online/CIAPS_Appraisal_Recovered_NNMF_SGD.csv` — the full MTurk sample's
   NNMF-recovered appraisal ratings (Study 1 headline analysis, N=201).
-- `Analysis/PLS_transformation_by_image.csv` — per-image PLS transformation
-  results (Study 3).
 - `Analysis/figs/` — generated figures and the fMRI ROI similarity/permutation
   test results (Study 4), including thresholded statistical maps (`.nii.gz`).
   `image_neural_similarity/` holds the image-by-region similarity matrices for
@@ -27,9 +31,8 @@ on positive versus negative emotional experiences, behaviorally and neurally.
      The 4 s boxcar with one model per run is the primary model.
   2. `roi_similarity.py` — inter-subject similarity per image and region for
      each model (and with run means equalized), plus compact subject-level arrays.
-  3. `supplement_analyses.py` — exact category-level permutation tests and the
-     evoked-response-strength analysis.
-  4. `run_variance.py` — run and trial-order structure of the single-trial betas.
+  3. `supplement_analyses.py` — exact category-level permutation tests.
+  4. `run_variance.py` — run structure of the single-trial betas.
   5. `inter_subject_rsa.py` — inter-subject RSA of neural vs appraisal similarity.
   6. `design_checks.py` — run-assignment overlap, valence-label agreement, and
      split-half reliability of the pairwise similarity measures.
@@ -41,8 +44,7 @@ on positive versus negative emotional experiences, behaviorally and neurally.
   Step 1 of the pipeline above needs them.
 - **Anonymized subject-level arrays** (`fMRI/derived/roi_pairwise_<model>.npz` for
   the one-TR impulse, 4 s boxcar and 4 s boxcar per image models: pairwise pattern
-  correlations, pattern magnitudes and projections on the shared response pattern,
-  per region and image). With the similarity matrices in `Analysis/figs/` they
+  correlations per region and image). With the similarity matrices in `Analysis/figs/` they
   reproduce `roi_similarity.py`'s similarity matrices, `supplement_analyses.py`,
   `inter_subject_rsa.py`, and the reliability and label checks in `design_checks.py`.
   They do not reproduce `first_level_betas.py`, `run_variance.py`, the

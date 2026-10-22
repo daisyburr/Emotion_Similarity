@@ -3,7 +3,7 @@
 For every timing model this writes
   Analysis/figs/image_neural_similarity/ROI_Image_Similarity_<model>.csv   136 images x 50 ROIs (mean pairwise r)
   fMRI/derived/roi_pairwise_<model>.npz   compact subject-level arrays that reproduce every downstream analysis
-                                          without voxel data (pairwise correlations, pattern norms, template projections)
+                                          without voxel data (pairwise pattern correlations per ROI)
 
 Models ending in _runeq equalize the run means of each subject's betas before correlating (ISS csv only).
 
@@ -73,19 +73,12 @@ def summarize(model):
     upper = np.triu_indices(n_sub, 1)
     iss = np.empty((n_img, 50))
     corr = np.empty((50, n_img, n_sub, n_sub), dtype=np.float32)
-    norm = np.empty((50, n_img, n_sub), dtype=np.float32)
-    proj = np.empty((50, n_sub, n_img, n_sub), dtype=np.float32)
-    template = np.empty((50, n_sub, n_sub), dtype=np.float32)
     for r, idx in enumerate(roi_voxel_indices()):
         x = data[:, :, idx].astype(np.float64)
         x -= x.mean(-1, keepdims=True)
         gram = np.einsum("siv,tiv->ist", x, x, optimize=True)
         length = np.sqrt(np.einsum("iss->is", gram))
         corr[r] = gram / (length[:, :, None] * length[:, None, :])
-        norm[r] = length
-        mean_pattern = x.mean(1)
-        proj[r] = np.einsum("siv,tv->sit", x, mean_pattern, optimize=True)
-        template[r] = mean_pattern @ mean_pattern.T
         iss[:, r] = corr[r][:, upper[0], upper[1]].mean(1)
     names = [i.split("_", 1)[1] for i in images]
     frame = pd.DataFrame(iss, index=names, columns=[f"ROI_{r}" for r in range(50)]).sort_index()
@@ -97,7 +90,7 @@ def summarize(model):
     }).sort_values("Image").to_csv(OUT / "image_valence_category.csv", index=False)
     if not model.endswith("_runeq"):
         np.savez_compressed(
-            DERIVED / f"roi_pairwise_{model}.npz", corr=corr, norm=norm, proj=proj, template=template,
+            DERIVED / f"roi_pairwise_{model}.npz", corr=corr,
             subjects=np.array(subjects), images=np.array(images),
         )
     print(f"{model}: ISS {frame.shape}, mean r = {iss.mean():.4f}", flush=True)
