@@ -1,4 +1,4 @@
-"""Study 3: appraisal-to-emotion prediction, rater level.
+"""Study 3: appraisal-to-emotion prediction.
 
 nested_cv_r2        For each image, predict every rater's six emotion ratings from their 13 appraisal ratings and score held-out raters
                     (leave-one-subject-out). Model complexity (mean-only, or PLS with 1-5 components) is chosen by 6-fold
