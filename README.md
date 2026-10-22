@@ -7,11 +7,10 @@ on positive versus negative emotional experiences, behaviorally and neurally.
 
 - `Analysis/Emotion_Similarity_Consolidated.ipynb` — the full analysis pipeline
   (Studies 1-4): behavioral appraisal similarity, PCA structure, an independent
-  video-dataset replication, appraisal-to-emotion prediction (nested cross-validation
-  and a Cowen & Keltner style analysis across images), and fMRI ROI inter-subject
-  similarity.
-- `Analysis/study3_transformation.py` — the Study 3 analyses (nested cross-validation
-  and the across-image analysis), imported by the notebook.
+  video-dataset replication, appraisal-to-emotion prediction within raters (nested
+  cross-validation), and fMRI ROI inter-subject similarity.
+- `Analysis/study3_transformation.py` — the Study 3 analysis (nested cross-validation),
+  imported by the notebook.
 - `Analysis/robustness_studies1to3.py` — the Study 2 check without arousal and the
   Study 3 alternative-model table (`Analysis/figs/robustness_studies1to3.csv`).
 - `Analysis/make_manuscript_figures.py` — assembles Figs. 1-4 from the notebook's panels.

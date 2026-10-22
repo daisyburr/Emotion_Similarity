@@ -1,14 +1,8 @@
-"""Study 3: appraisal-to-emotion transformation, rater-level and image-level analyses.
+"""Study 3: appraisal-to-emotion prediction, rater level.
 
 nested_cv_r2        For each image, predict every rater's six emotion ratings from their 13 appraisal ratings and score held-out raters
                     (leave-one-subject-out). Model complexity (mean-only, or PLS with 1-5 components) is chosen by 6-fold
                     cross-validation inside the training raters, so the choice never sees the held-out rater or the valence label.
-cowen_keltner       Following Cowen & Keltner (2017, PNAS): leave-one-out cross-validated linear and k-nearest-neighbor regression of the
-                    emotion ratings on the appraisal ratings across images (rater means), separately within positive and negative
-                    images; explained variance divided by the explainable variance (split-half reliability of each emotion rating
-                    across images, Spearman-Brown corrected); k chosen from 1-50 as the value with the greatest average explained
-                    variance. The positive-minus-negative difference is bootstrapped by resampling stimulus categories within each
-                    valence.
 """
 import numpy as np
 import pandas as pd
@@ -73,69 +67,3 @@ def nested_cv_r2(ratings):
                     "nested_CV_R2": 1 - ((Y - P) ** 2).sum() / ((Y - Y.mean(0)) ** 2).sum(),
                     "share_mean_only": float(np.mean(np.array(chosen) == 0))})
     return pd.DataFrame(out)
-
-
-def _loo_linear(X, Y):
-    Z = np.column_stack([np.ones(len(X)), X])
-    H = Z @ np.linalg.pinv(Z.T @ Z) @ Z.T
-    return Y - (Y - H @ Y) / (1 - np.diag(H))[:, None]
-
-
-def _loo_knn(X, Y, k):
-    Xs = (X - X.mean(0)) / X.std(0)
-    distance = ((Xs[:, None, :] - Xs[None, :, :]) ** 2).sum(-1)
-    np.fill_diagonal(distance, np.inf)
-    return Y[np.argsort(distance, 1)[:, :k]].mean(1)
-
-
-def _explained(Y, P):
-    return 1 - ((Y - P) ** 2).sum(0) / ((Y - Y.mean(0)) ** 2).sum(0)
-
-
-def cowen_keltner(ratings, n_boot=2000):
-    images = sorted(ratings.Image.unique())
-    subjects = sorted(ratings.Subject.unique())
-    wide = lambda column: ratings.pivot(index="Subject", columns="Image", values=column).reindex(index=subjects, columns=images).values
-    predictors = np.stack([wide(c) for c in FEATURES], -1)
-    targets = np.stack([wide(c) for c in TARGETS], -1)
-    info, _ = image_table(images)
-    valence, category = info.Valence.values, info.Category.values
-    rng = np.random.default_rng(SEED)
-    half = len(subjects) // 2
-
-    fits = {}
-    for label, mask in (("positive", valence == "pos"), ("negative", valence == "neg")):
-        X, Y = predictors.mean(0)[mask], targets.mean(0)[mask]
-        reliability = []
-        for _ in range(200):
-            perm = rng.permutation(len(subjects))
-            a, b = targets[perm[:half]][:, mask].mean(0), targets[perm[half:2 * half]][:, mask].mean(0)
-            r = np.array([np.corrcoef(a[:, j], b[:, j])[0, 1] for j in range(Y.shape[1])])
-            reliability.append(2 * r / (1 + r))
-        explainable = np.mean(reliability, 0)
-        ks = range(1, min(50, len(X) - 1) + 1)
-        scores = {k: _explained(Y, _loo_knn(X, Y, k)) for k in ks}
-        best = max(ks, key=lambda k: scores[k].mean())
-        fits[label] = {"mask": mask, "Y": Y, "linear": _loo_linear(X, Y), "knn": _loo_knn(X, Y, best), "explainable": explainable, "k": best}
-
-    def normalized(label, which, index):
-        fit = fits[label]
-        Y, P = fit["Y"][index], fit[which][index]
-        return ((1 - ((Y - P) ** 2).sum(0) / ((Y - fit["Y"].mean(0)) ** 2).sum(0)) / fit["explainable"]).mean()
-
-    groups = {label: {c: np.where(category[fits[label]["mask"]] == c)[0] for c in np.unique(category[fits[label]["mask"]])} for label in fits}
-    result = {"n": {label: int(fits[label]["mask"].sum()) for label in fits},
-              "explainable": {label: float(fits[label]["explainable"].mean()) for label in fits}, "k": {label: fits[label]["k"] for label in fits}}
-    for which in ("linear", "knn"):
-        values = {label: float(normalized(label, which, np.arange(fits[label]["Y"].shape[0]))) for label in fits}
-        draws = []
-        for _ in range(n_boot):
-            pair = []
-            for label in ("positive", "negative"):
-                keys = list(groups[label])
-                pick = rng.choice(len(keys), len(keys))
-                pair.append(normalized(label, which, np.concatenate([groups[label][keys[i]] for i in pick])))
-            draws.append(pair[0] - pair[1])
-        result[which] = {**values, "difference": values["positive"] - values["negative"],
-                         "interval": (float(np.percentile(draws, 2.5)), float(np.percentile(draws, 97.5)))}
-    return result

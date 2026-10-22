@@ -3,13 +3,7 @@
 A. Study 2: similarity with arousal excluded from the feature set (12 appraisal dimensions); valence effect on similarity
    adjusted for arousal, for both feature spaces.
 B. Study 3: leave-one-subject-out cross-validated R2 under PLS with 1 or 2 components, ridge regression, and a valence-blind
-   nested cross-validation that chooses model complexity inside the training raters (Table S5).
-C. Study 3 following Cowen & Keltner (2017, PNAS): leave-one-out cross-validated linear and k-nearest-neighbor regression of the
-   emotion ratings on the appraisal ratings across images (rater means), run separately within positive and negative images;
-   explained variance divided by the explainable variance (split-half reliability of each emotion rating across images,
-   Spearman-Brown corrected); k chosen from 1-50 as the value with the greatest average explained variance; the positive-minus-negative
-   difference is bootstrapped by resampling stimulus categories within each valence (Table S1), with the across-image and
-   across-rater variances behind the comparison.
+   nested cross-validation that chooses model complexity inside the training raters (Table S4).
 Category-level p-values use the exact cluster-label permutation in fmri/supplement_analyses.py.
 
 Usage: python robustness_studies1to3.py
@@ -32,7 +26,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(HERE / "fmri"))
 import supplement_analyses as S  # noqa: E402
-from study3_transformation import FEATURES, TARGETS, cowen_keltner, image_table, nested_prediction  # noqa: E402
+from study3_transformation import FEATURES, TARGETS, image_table, nested_prediction  # noqa: E402
 
 rows = []
 
@@ -127,28 +121,7 @@ def study3():
         f"{(chosen[pos] == 0).mean():.2f} / {(chosen[~pos] == 0).mean():.2f}")
 
 
-def study3_cowen_keltner():
-    ratings = pd.read_csv(HERE / "IAPS_rating.csv", index_col=0)
-    result = cowen_keltner(ratings)
-    for label in ("positive", "negative"):
-        add("C", f"{label} images (n = {result['n'][label]}): explainable variance (mean of six emotions)", f"{result['explainable'][label]:.2f}")
-        add("C", f"{label} images: leave-one-out explained variance / explainable variance, linear; k-NN (k = {result['k'][label]})",
-            f"{result['linear'][label]:.3f}; {result['knn'][label]:.3f}")
-    images = sorted(ratings.Image.unique())
-    info, _ = image_table(images)
-    means = ratings.groupby("Image")[FEATURES + TARGETS].mean().reindex(images)
-    within = ratings.groupby("Image")[TARGETS].var().mean(1).reindex(images)
-    for label, code in (("positive", "pos"), ("negative", "neg")):
-        mask = (info.Valence == code).values
-        add("C", f"{label} images: across-image variance of mean appraisal ratings; of mean emotion ratings; across-rater variance of emotion ratings within image",
-            f"{means.loc[mask, FEATURES].var().mean():.0f}; {means.loc[mask, TARGETS].var().mean():.0f}; {within[mask].mean():.0f}")
-    for which, name in (("linear", "linear regression"), ("knn", "k-nearest-neighbor regression")):
-        lo, hi = result[which]["interval"]
-        add("C", f"{name}: positive minus negative normalized explained variance (category bootstrap, 95% interval)",
-            f"{result[which]['difference']:+.3f} [{lo:+.3f}, {hi:+.3f}]")
-
-
 if __name__ == "__main__":
-    for step in (study2, study3, study3_cowen_keltner):
+    for step in (study2, study3):
         step()
     pd.DataFrame(rows, columns=["Section", "Check", "Value"]).to_csv(HERE / "figs" / "robustness_studies1to3.csv", index=False)

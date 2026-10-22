@@ -7,11 +7,3 @@ B,"leave-one-subject-out CV R2, ridge alpha = 100 (images with R2 > 0: 0/136)","
 B,"leave-one-subject-out CV R2, ridge alpha = 1000 (images with R2 > 0: 21/136)","positive -0.119, negative -0.301, d = +1.31, image-level p = 3.8e-12, category-level exact p = 0.00011 (22 clusters)"
 B,"nested CV R2, complexity chosen inside training raters (mean-only or PLS 1-5; images with R2 > 0: 45/136)","positive 0.007, negative -0.052, d = +0.83, image-level p = 3.2e-06, category-level exact p = 0.00063 (22 clusters)"
 B,"nested CV: share of folds choosing the mean-only model, positive / negative images",0.09 / 0.41
-C,positive images (n = 67): explainable variance (mean of six emotions),0.94
-C,"positive images: leave-one-out explained variance / explainable variance, linear; k-NN (k = 5)",0.564; 0.551
-C,negative images (n = 69): explainable variance (mean of six emotions),0.97
-C,"negative images: leave-one-out explained variance / explainable variance, linear; k-NN (k = 3)",0.744; 0.729
-C,positive images: across-image variance of mean appraisal ratings; of mean emotion ratings; across-rater variance of emotion ratings within image,94; 97; 321
-C,negative images: across-image variance of mean appraisal ratings; of mean emotion ratings; across-rater variance of emotion ratings within image,258; 160; 301
-C,"linear regression: positive minus negative normalized explained variance (category bootstrap, 95% interval)","-0.180 [-0.394, +0.038]"
-C,"k-nearest-neighbor regression: positive minus negative normalized explained variance (category bootstrap, 95% interval)","-0.178 [-0.348, -0.051]"
