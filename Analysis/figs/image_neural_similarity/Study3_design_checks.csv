@@ -5,7 +5,7 @@ mean share of images in the same run for a pair (chance 0.25),0.249
 images in both label sets,136
 images whose valence label differs,2
 images whose valence label differs (names),FA-skater.jpg; TH-Animals_004_v.jpg
-"primary model, FDR-significant ROIs with Study 4 labels (negative > positive / positive > negative)",30 (29 / 1)
+"primary model, FDR-significant ROIs with Study 3 labels (negative > positive / positive > negative)",30 (29 / 1)
 "primary model, FDR-significant ROIs with Study 1 labels (negative > positive / positive > negative)",29 (28 / 1)
 "split-half reliability of pairwise appraisal similarity, pos images",0.97
 "split-half reliability of pairwise neural similarity (mean over ROIs), pos images",0.43

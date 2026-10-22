@@ -6,25 +6,25 @@ on positive versus negative emotional experiences, behaviorally and neurally.
 ## Contents
 
 - `Analysis/Emotion_Similarity_Consolidated.ipynb` — the full analysis pipeline
-  (Studies 1-4): behavioral appraisal similarity, PCA structure, an independent
-  video-dataset replication, appraisal-to-emotion prediction within raters (nested
-  cross-validation), and fMRI ROI inter-subject similarity.
-- `Analysis/study3_transformation.py` — the Study 3 analysis (nested cross-validation),
-  imported by the notebook.
-- `Analysis/robustness_studies1to3.py` — the Study 2 check without arousal and the
-  Study 3 alternative-model table (`Analysis/figs/robustness_studies1to3.csv`).
-- `Analysis/make_manuscript_figures.py` — assembles Figs. 1-4 from the notebook's panels.
+  (Studies 1-3 and the mechanism test): behavioral appraisal similarity, PCA structure, an
+  independent video-dataset replication, fMRI ROI inter-subject similarity, and the
+  mechanism test (appraisal-to-emotion prediction within an image, by nested cross-validation).
+- `Analysis/mechanism_test.py` — the mechanism test (supplementary text S4), imported by the
+  notebook.
+- `Analysis/robustness_checks.py` — the Study 2 check without arousal and the mechanism-test
+  alternative-model table (`Analysis/figs/robustness_checks.csv`).
+- `Analysis/make_manuscript_figures.py` — assembles Figs. 1-3 and Fig. S1 from the notebook's panels.
 - `Analysis/IAPS_rating.csv` — behavioral appraisal ratings for the fMRI subsample
-  (Study 1/3/4).
+  (Study 3 and the mechanism test).
 - `Online/CIAPS_Appraisal_Recovered_NNMF_SGD.csv` — the full MTurk sample's
   NNMF-recovered appraisal ratings (Study 1 headline analysis, N=201).
 - `Analysis/figs/` — generated figures and the fMRI ROI similarity/permutation
-  test results (Study 4), including thresholded statistical maps (`.nii.gz`).
+  test results (Study 3), including thresholded statistical maps (`.nii.gz`).
   `image_neural_similarity/` holds the image-by-region similarity matrices for
   each first-level model (`ROI_Image_Similarity_<model>.csv`), the supplementary
-  Study 4 tables (`Study4_*.csv`), and, in `original_impulse_2021/`, the outputs
+  Study 3 tables (`Study3_*.csv`), and, in `original_impulse_2021/`, the outputs
   of the original one-TR impulse analysis.
-- `Analysis/fmri/` — the Study 4 pipeline, in the order it is run:
+- `Analysis/fmri/` — the Study 3 pipeline, in the order it is run:
   1. `first_level_betas.py <subject>` — single-trial betas under three timing
      models (one-TR impulse, 4 s boxcar, 4 s boxcar with one model per trial).
      The 4 s boxcar with one model per run is the primary model.
@@ -67,12 +67,12 @@ The IAPS images and the Cowen & Keltner data are not part of this repository and
 
 The notebook was built and run with Python 3.11 (pandas, numpy, scikit-learn,
 scipy, nltools, nibabel, nilearn, statsmodels, matplotlib, seaborn); the exact
-versions are in `environment.yml` (`conda env create -f environment.yml`). Study 4
+versions are in `environment.yml` (`conda env create -f environment.yml`). Study 3
 additionally requires the Neurosynth-derived 50-region parcellation used for the
 fMRI ROI analysis (NeuroVault collection 2099; fetched automatically in the
 notebook and cached in `fMRI/derived/`).
 
-Studies 1-3 run end to end from the files in this repository. For Study 4, the
+Studies 1 and 2 and the mechanism test run end to end from the files in this repository. For Study 3, the
 notebook reads the similarity matrices and supplementary tables in
 `Analysis/figs/image_neural_similarity/`; to regenerate them, run the scripts in
 `Analysis/fmri/` in the order listed above (steps 3 and 5, and the parts of step 6

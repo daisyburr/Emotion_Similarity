@@ -1,4 +1,4 @@
-"""Supplementary Study 4 analysis: category-level inference.
+"""Supplementary Study 3 analysis: category-level inference.
 
 1. Category-level inference. Images sit in valence-pure stimulus categories (23 category x valence clusters), so the
    image-level permutation test treats non-independent images as independent. Here the cluster labels themselves are
@@ -8,7 +8,7 @@
 
 Inputs: Analysis/figs/image_neural_similarity/ROI_Image_Similarity_<model>.csv, image_valence_category.csv,
         fMRI/derived/roi_pairwise_<model>.npz (from roi_similarity.py)
-Outputs: Study4_category_level_by_model.csv, Study4_category_level_by_ROI.csv
+Outputs: Study3_category_level_by_model.csv, Study3_category_level_by_ROI.csv
 Usage: python supplement_analyses.py
 """
 from itertools import combinations
@@ -106,8 +106,8 @@ def summarize_category_level():
                 by_roi = {"ROI": range(50), "diff_pos_minus_neg": diff, "p_exact": p,
                           "q_exact": multipletests(p, alpha=0.05, method="fdr_bh")[1]}
         print(model, flush=True)
-    pd.DataFrame(by_model).to_csv(OUT / "Study4_category_level_by_model.csv", index=False)
-    pd.DataFrame(by_roi).to_csv(OUT / "Study4_category_level_by_ROI.csv", index=False)
+    pd.DataFrame(by_model).to_csv(OUT / "Study3_category_level_by_model.csv", index=False)
+    pd.DataFrame(by_roi).to_csv(OUT / "Study3_category_level_by_ROI.csv", index=False)
     return pd.DataFrame(by_model)
 
 

@@ -1,7 +1,7 @@
 """Assemble the manuscript figures from the panels the consolidated notebook saves (Science format: 300 dpi, bold 10 pt panel letters).
 
-Run after executing Emotion_Similarity_Consolidated.ipynb. Fig. 1 and Fig. 2 are two panels side by side (A, B); the other figures
-are copied from the notebook's output so that every submitted figure sits in Analysis/figs/manuscript_figures.
+Run after executing Emotion_Similarity_Consolidated.ipynb. Fig. 1 and Fig. 2 are two panels side by side (A, B); Fig. 3 is the brain map
+(Study 3) and Fig. S1 is the mechanism-test panel; both sit in Analysis/figs/manuscript_figures.
 """
 import os
 import shutil
@@ -35,7 +35,7 @@ two_panel("CK_App__valence_barplot_correlation.png", "CK_Emo__valence_barplot_co
 
 
 def brain_map(name):
-    """Fig. 4: the brain map with the color bar labeled (nilearn clips the label at the image edge)."""
+    """Fig. 3: the brain map with the color bar labeled (nilearn clips the label at the image edge)."""
     img = Image.open(os.path.join(FIGS, "image_neural_similarity", "brain_map_pos_vs_neg.png")).convert("RGB")
     margin = 90
     canvas = Image.new("RGB", (img.width + margin, img.height), "white")
@@ -51,5 +51,5 @@ def brain_map(name):
     canvas.resize((width, round(canvas.height * width / canvas.width)), Image.LANCZOS).save(os.path.join(OUT, name), dpi=(DPI, DPI))
 
 
-brain_map("Fig4.png")
-shutil.copy(os.path.join(FIGS, "trans", "emo_transformation_nestedCVR2_barplot_valence.png"), os.path.join(OUT, "Fig3.png"))
+brain_map("Fig3.png")
+shutil.copy(os.path.join(FIGS, "trans", "emo_transformation_nestedCVR2_barplot_valence.png"), os.path.join(OUT, "FigS1.png"))

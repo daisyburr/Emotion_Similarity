@@ -8,7 +8,7 @@ Positive-vs-negative difference in coupling: permutation of image labels, and of
 Variant: subject main effects (row and column means) removed from both matrices before correlating.
 
 Inputs: fMRI/derived/roi_pairwise_<model>.npz (from roi_similarity.py), Analysis/IAPS_rating.csv
-Output: Analysis/figs/image_neural_similarity/Study4_IS_RSA_by_ROI.csv
+Output: Analysis/figs/image_neural_similarity/Study3_IS_RSA_by_ROI.csv
 """
 import sys
 from pathlib import Path
@@ -155,7 +155,7 @@ def main():
             p = (np.sum(np.abs(null) >= np.abs(delta), axis=0) + 1) / (N_CONTRAST + 1)
             result[f"{tag}p_delta_{mode}"] = p
             result[f"{tag}q_delta_{mode}"] = multipletests(p, alpha=0.05, method="fdr_bh")[1]
-    result.to_csv(OUT / "Study4_IS_RSA_by_ROI.csv", index=False)
+    result.to_csv(OUT / "Study3_IS_RSA_by_ROI.csv", index=False)
     print(result.describe().T[["mean", "min", "max"]].round(3).to_string())
 
 

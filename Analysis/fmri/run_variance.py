@@ -3,7 +3,7 @@
 Per subject and ROI: eta^2 (run), the between-run share of each voxel's beta variance over the 136 trials, averaged over voxels.
 Averaged over ROIs and subjects, and compared with the share expected if the 136 images were assigned to the four runs at random.
 
-Output: Analysis/figs/image_neural_similarity/Study4_run_variance.csv
+Output: Analysis/figs/image_neural_similarity/Study3_run_variance.csv
 Usage: python run_variance.py
 """
 import numpy as np
@@ -36,7 +36,7 @@ def main():
             "Run eta^2 expected by chance": round((N_RUNS - 1) / (N_TRIALS - 1), 3),
         })
     frame = pd.DataFrame(rows)
-    frame.to_csv(OUT / "Study4_run_variance.csv", index=False)
+    frame.to_csv(OUT / "Study3_run_variance.csv", index=False)
     print(frame.T.to_string(header=False))
 
 

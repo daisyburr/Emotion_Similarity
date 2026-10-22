@@ -1,13 +1,13 @@
-"""Robustness checks for Studies 1-3 (supplementary; every figure quoted for these checks in the paper comes from here).
+"""Robustness checks for Study 2 and the mechanism test (supplementary; every figure quoted for these checks in the paper comes from here).
 
 A. Study 2: similarity with arousal excluded from the feature set (12 appraisal dimensions); valence effect on similarity
    adjusted for arousal, for both feature spaces.
-B. Study 3: leave-one-subject-out cross-validated R2 under PLS with 1 or 2 components, ridge regression, and a valence-blind
+B. Mechanism test: leave-one-subject-out cross-validated R2 under PLS with 1 or 2 components, ridge regression, and a valence-blind
    nested cross-validation that chooses model complexity inside the training raters (Table S4).
 Category-level p-values use the exact cluster-label permutation in fmri/supplement_analyses.py.
 
-Usage: python robustness_studies1to3.py
-Output: Analysis/figs/robustness_studies1to3.csv
+Usage: python robustness_checks.py
+Output: Analysis/figs/robustness_checks.csv
 """
 import sys
 import warnings
@@ -26,7 +26,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(HERE / "fmri"))
 import supplement_analyses as S  # noqa: E402
-from study3_transformation import FEATURES, TARGETS, image_table, nested_prediction  # noqa: E402
+from mechanism_test import FEATURES, TARGETS, image_table, nested_prediction  # noqa: E402
 
 rows = []
 
@@ -87,7 +87,7 @@ def study2():
                                           f"valence coefficient adjusted for arousal {adjusted.params['pos']:.3f} (t = {adjusted.tvalues['pos']:.1f})")
 
 
-def study3():
+def mechanism_test():
     ratings = pd.read_csv(HERE / "IAPS_rating.csv", index_col=0)
     images = sorted(ratings.Image.unique())
     info, cluster = image_table(images)
@@ -122,6 +122,6 @@ def study3():
 
 
 if __name__ == "__main__":
-    for step in (study2, study3):
+    for step in (study2, mechanism_test):
         step()
-    pd.DataFrame(rows, columns=["Section", "Check", "Value"]).to_csv(HERE / "figs" / "robustness_studies1to3.csv", index=False)
+    pd.DataFrame(rows, columns=["Section", "Check", "Value"]).to_csv(HERE / "figs" / "robustness_checks.csv", index=False)

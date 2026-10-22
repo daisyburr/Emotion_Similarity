@@ -1,14 +1,14 @@
-"""Design and reliability checks behind figures quoted in the Study 4 supplementary text.
+"""Design and reliability checks behind figures quoted in the Study 3 supplementary text.
 
 1. Image-to-run assignment: how many participant pairs share an assignment, and the mean share of images that a pair
    saw in the same run (0.25 expected under independent random assignment to four runs).
 2. Valence labels: agreement between the Study 1 definition (mean Pleasant rating > 30) and the stimulus-set label used
-   in Study 4, and the Study 4 two-sample result when the disagreeing images take their Study 1 labels.
+   in Study 3, and the Study 3 two-sample result when the disagreeing images take their Study 1 labels.
 3. Split-half reliability (random halves of the images, Spearman-Brown corrected) of the pairwise appraisal similarity and
    of the pairwise neural similarity, per valence.
 
 Inputs: fMRI/derived/first_level/*.npz, fMRI/derived/roi_pairwise_box4_LSA.npz, Online/CIAPS_Appraisal_Recovered_NNMF_SGD.csv
-Output: Analysis/figs/image_neural_similarity/Study4_design_checks.csv
+Output: Analysis/figs/image_neural_similarity/Study3_design_checks.csv
 Usage: python design_checks.py
 """
 import numpy as np
@@ -46,14 +46,14 @@ def label_agreement(rows):
     study1 = (pleasant > 30).rename("study1_pos")
     info = pd.read_csv(OUT / "image_valence_category.csv", index_col="Image")
     joined = pd.concat([study1, info.Valence == "pos"], axis=1, join="inner")
-    joined.columns = ["study1_pos", "study4_pos"]
-    disagree = joined[joined.study1_pos != joined.study4_pos]
+    joined.columns = ["study1_pos", "study3_pos"]
+    disagree = joined[joined.study1_pos != joined.study3_pos]
     rows += [("images in both label sets", len(joined)), ("images whose valence label differs", len(disagree)),
              ("images whose valence label differs (names)", "; ".join(disagree.index))]
 
     z = np.arctanh(pd.read_csv(OUT / "ROI_Image_Similarity_box4_LSA.csv", index_col=0).reindex(info.index).values)
     rng = np.random.default_rng(SEED)
-    for name, label in (("Study 4 labels", (info.Valence == "pos").values), ("Study 1 labels", joined.study1_pos.reindex(info.index).values)):
+    for name, label in (("Study 3 labels", (info.Valence == "pos").values), ("Study 1 labels", joined.study1_pos.reindex(info.index).values)):
         observed = z[label].mean(0) - z[~label].mean(0)
         count = np.zeros(50)
         for _ in range(N_PERMUTE):
@@ -91,5 +91,5 @@ if __name__ == "__main__":
     for step in (run_assignment_overlap, label_agreement, split_half_reliability):
         step(rows)
     frame = pd.DataFrame(rows, columns=["Check", "Value"])
-    frame.to_csv(OUT / "Study4_design_checks.csv", index=False)
+    frame.to_csv(OUT / "Study3_design_checks.csv", index=False)
     print(frame.to_string(index=False))
