@@ -37,9 +37,8 @@ on positive versus negative emotional experiences, behaviorally and neurally.
 ## Not included here
 
 - **Raw fMRI data** (preprocessed images and single-trial beta maps, ~157GB):
-  these are human-subjects neuroimaging data and are available on request,
-  subject to appropriate data use agreements, rather than distributed via a
-  public git repository. Step 1 of the pipeline above needs them.
+  too large for a git repository; available at [repository link to be added].
+  Step 1 of the pipeline above needs them.
 - **Anonymized subject-level arrays** (`fMRI/derived/roi_pairwise_<model>.npz` for
   the one-TR impulse, 4 s boxcar and 4 s boxcar per image models: pairwise pattern
   correlations, pattern magnitudes and projections on the shared response pattern,
@@ -49,7 +48,7 @@ on positive versus negative emotional experiences, behaviorally and neurally.
   They do not reproduce `first_level_betas.py`, `run_variance.py`, the
   run-mean-equalized models, or the run-assignment check, which need the voxel betas
   and onset files. The arrays are too large for git and are archived separately
-  [archive DOI to be added].
+  at the Open Science Framework (https://osf.io/qn3ve/) [DOI to be added].
 - **Study 2 stimulus/response data**: from Cowen & Keltner (2017, *PNAS*),
   "Self-report captures 27 distinct categories of emotion bridged by continuous
   gradients." This is a third-party dataset; see the original publication for
