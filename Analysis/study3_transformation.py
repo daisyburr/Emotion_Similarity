@@ -42,7 +42,7 @@ class MeanModel:
 
 
 def make_model(k):
-    return MeanModel() if k == 0 else PLSRegression(n_components=k)
+    return MeanModel() if k == 0 else PLSRegression(n_components=k, max_iter=5000)
 
 
 def nested_prediction(X, Y, ks=(0, 1, 2, 3, 4, 5)):
